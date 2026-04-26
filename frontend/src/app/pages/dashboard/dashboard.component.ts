@@ -27,15 +27,15 @@ import { OcupacionBarComponent } from '../../shared/components/ocupacion-bar.com
     <div class="p-6 flex flex-col gap-6">
       <!-- Header -->
       <div>
-        <h1 class="text-2xl font-bold text-surface-100">Dashboard</h1>
-        <p class="text-surface-400 text-sm mt-1">Monitoreo en tiempo real de la flota</p>
+        <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
+        <p class="text-gray-500 text-sm mt-1">Monitoreo en tiempo real de la flota</p>
       </div>
 
       <!-- KPI Cards -->
       @if (cargando()) {
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           @for (i of [1,2,3,4]; track i) {
-            <div class="bg-surface-800 rounded-xl p-5 border border-surface-700">
+            <div class="bg-white rounded-xl p-5 border border-gray-200">
               <p-skeleton height="1rem" width="60%" styleClass="mb-3" />
               <p-skeleton height="2.5rem" width="40%" />
             </div>
@@ -44,20 +44,20 @@ import { OcupacionBarComponent } from '../../shared/components/ocupacion-bar.com
       } @else {
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <!-- Total -->
-          <div class="bg-surface-800 rounded-xl p-5 border border-surface-700">
+          <div class="bg-white rounded-xl p-5 border border-gray-200">
             <div class="flex items-center justify-between mb-3">
-              <p class="text-surface-400 text-sm font-medium">Total Buses</p>
+              <p class="text-gray-500 text-sm font-medium">Total Buses</p>
               <div class="w-8 h-8 bg-brand/20 rounded-lg flex items-center justify-center">
                 <i class="pi pi-car text-brand text-sm"></i>
               </div>
             </div>
-            <p class="text-3xl font-bold text-surface-100">{{ totalBuses() }}</p>
+            <p class="text-3xl font-bold text-gray-800">{{ totalBuses() }}</p>
           </div>
 
           <!-- En Ruta -->
-          <div class="bg-surface-800 rounded-xl p-5 border border-surface-700">
+          <div class="bg-white rounded-xl p-5 border border-gray-200">
             <div class="flex items-center justify-between mb-3">
-              <p class="text-surface-400 text-sm font-medium">En Ruta</p>
+              <p class="text-gray-500 text-sm font-medium">En Ruta</p>
               <div class="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
                 <i class="pi pi-map-marker text-green-400 text-sm"></i>
               </div>
@@ -66,9 +66,9 @@ import { OcupacionBarComponent } from '../../shared/components/ocupacion-bar.com
           </div>
 
           <!-- En Cola -->
-          <div class="bg-surface-800 rounded-xl p-5 border border-surface-700">
+          <div class="bg-white rounded-xl p-5 border border-gray-200">
             <div class="flex items-center justify-between mb-3">
-              <p class="text-surface-400 text-sm font-medium">En Cola</p>
+              <p class="text-gray-500 text-sm font-medium">En Cola</p>
               <div class="w-8 h-8 bg-amber-500/20 rounded-lg flex items-center justify-center">
                 <i class="pi pi-clock text-amber-400 text-sm"></i>
               </div>
@@ -77,9 +77,9 @@ import { OcupacionBarComponent } from '../../shared/components/ocupacion-bar.com
           </div>
 
           <!-- Fuera de Servicio -->
-          <div class="bg-surface-800 rounded-xl p-5 border border-surface-700">
+          <div class="bg-white rounded-xl p-5 border border-gray-200">
             <div class="flex items-center justify-between mb-3">
-              <p class="text-surface-400 text-sm font-medium">Fuera de Servicio</p>
+              <p class="text-gray-500 text-sm font-medium">Fuera de Servicio</p>
               <div class="w-8 h-8 bg-red-500/20 rounded-lg flex items-center justify-center">
                 <i class="pi pi-times-circle text-red-400 text-sm"></i>
               </div>
@@ -90,15 +90,15 @@ import { OcupacionBarComponent } from '../../shared/components/ocupacion-bar.com
       }
 
       <!-- Tabla flota en vivo -->
-      <div class="bg-surface-800 rounded-xl border border-surface-700 overflow-hidden">
-        <div class="px-5 py-4 border-b border-surface-700 flex items-center justify-between">
+      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
           <div>
-            <h2 class="text-surface-100 font-semibold">Flota en Vivo</h2>
-            <p class="text-surface-400 text-xs mt-0.5">Actualización cada 30 segundos</p>
+            <h2 class="text-gray-800 font-semibold">Flota en Vivo</h2>
+            <p class="text-gray-500 text-xs mt-0.5">Actualización cada 30 segundos</p>
           </div>
           <div class="flex items-center gap-2">
             <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-            <span class="text-surface-400 text-xs">En vivo</span>
+            <span class="text-gray-500 text-xs">En vivo</span>
           </div>
         </div>
 
@@ -120,16 +120,16 @@ import { OcupacionBarComponent } from '../../shared/components/ocupacion-bar.com
           <ng-template pTemplate="body" let-bus>
             <tr>
               <td>
-                <span class="font-mono font-semibold text-surface-100">{{ bus.codigo }}</span>
+                <span class="font-mono font-semibold text-gray-800">{{ bus.codigo }}</span>
               </td>
               <td>
-                <span class="text-surface-400">{{ bus.capacidad }} pasajeros</span>
+                <span class="text-gray-500">{{ bus.capacidad }} pasajeros</span>
               </td>
               <td>
                 @if (bus.estadoOperativoActual) {
                   <app-status-badge [estado]="bus.estadoOperativoActual" />
                 } @else {
-                  <span class="text-surface-400 text-xs">—</span>
+                  <span class="text-gray-500 text-xs">—</span>
                 }
               </td>
               <td>
@@ -139,16 +139,16 @@ import { OcupacionBarComponent } from '../../shared/components/ocupacion-bar.com
                     [pasajeros]="bus.reporteActivo.cantidadPasajeros"
                     [capacidad]="bus.reporteActivo.capacidadBus" />
                 } @else {
-                  <span class="text-surface-400 text-xs">—</span>
+                  <span class="text-gray-500 text-xs">—</span>
                 }
               </td>
               <td>
                 @if (bus.reporteActivo?.ultimoSeguimiento) {
-                  <span class="text-surface-400 text-xs">
+                  <span class="text-gray-500 text-xs">
                     {{ tiempoRelativo(bus.reporteActivo!.ultimoSeguimiento!.fechaCreacion) }}
                   </span>
                 } @else {
-                  <span class="text-surface-400 text-xs">Sin datos</span>
+                  <span class="text-gray-500 text-xs">Sin datos</span>
                 }
               </td>
               <td class="text-center">
@@ -165,7 +165,7 @@ import { OcupacionBarComponent } from '../../shared/components/ocupacion-bar.com
           </ng-template>
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="6" class="text-center py-10 text-surface-400">
+              <td colspan="6" class="text-center py-10 text-gray-500">
                 <i class="pi pi-car text-4xl mb-3 block opacity-30"></i>
                 No hay buses registrados
               </td>
@@ -175,7 +175,7 @@ import { OcupacionBarComponent } from '../../shared/components/ocupacion-bar.com
 
         <!-- Paginador -->
         @if (totalRecords() > 0) {
-          <div class="border-t border-surface-700">
+          <div class="border-t border-gray-200">
             <p-paginator
               [rows]="pageSize"
               [totalRecords]="totalRecords()"

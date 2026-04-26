@@ -36,8 +36,8 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge.compo
       <!-- Header -->
       <div class="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 class="text-2xl font-bold text-surface-100">Gestión de Flota</h1>
-          <p class="text-surface-400 text-sm mt-1">Administra los buses del sistema</p>
+          <h1 class="text-2xl font-bold text-gray-800">Gestión de Flota</h1>
+          <p class="text-gray-500 text-sm mt-1">Administra los buses del sistema</p>
         </div>
         <p-button
           label="Nuevo Bus"
@@ -47,7 +47,7 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge.compo
       </div>
 
       <!-- Tabla -->
-      <div class="bg-surface-800 rounded-xl border border-surface-700 overflow-hidden">
+      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <p-table
           [value]="buses()"
           [loading]="cargando()"
@@ -65,16 +65,16 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge.compo
           </ng-template>
           <ng-template pTemplate="body" let-bus>
             <tr>
-              <td><span class="text-surface-400 text-sm">{{ bus.id }}</span></td>
+              <td><span class="text-gray-500 text-sm">{{ bus.id }}</span></td>
               <td>
-                <span class="font-mono font-semibold text-surface-100">{{ bus.codigo }}</span>
+                <span class="font-mono font-semibold text-gray-800">{{ bus.codigo }}</span>
               </td>
-              <td><span class="text-surface-400">{{ bus.capacidad }} pas.</span></td>
+              <td><span class="text-gray-500">{{ bus.capacidad }} pas.</span></td>
               <td>
                 @if (bus.estadoOperativoActual) {
                   <app-status-badge [estado]="bus.estadoOperativoActual" />
                 } @else {
-                  <span class="text-surface-400 text-xs">Sin estado</span>
+                  <span class="text-gray-500 text-xs">Sin estado</span>
                 }
               </td>
               <td>
@@ -120,7 +120,7 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge.compo
           </ng-template>
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="6" class="text-center py-10 text-surface-400">
+              <td colspan="6" class="text-center py-10 text-gray-500">
                 <i class="pi pi-car text-4xl mb-3 block opacity-30"></i>
                 No hay buses registrados
               </td>
@@ -129,7 +129,7 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge.compo
         </p-table>
 
         @if (totalRecords() > 0) {
-          <div class="border-t border-surface-700">
+          <div class="border-t border-gray-200">
             <p-paginator
               [rows]="pageSize"
               [totalRecords]="totalRecords()"
@@ -150,7 +150,7 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge.compo
       [style]="{ width: '420px' }">
       <div class="flex flex-col gap-4 py-2">
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-surface-400">Código</label>
+          <label class="text-sm font-medium text-gray-500">Código</label>
           <input
             pInputText
             [formControl]="$any(form.controls['codigo'])"
@@ -161,7 +161,7 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge.compo
           }
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-surface-400">Capacidad</label>
+          <label class="text-sm font-medium text-gray-500">Capacidad</label>
           <p-inputNumber
             [formControl]="$any(form.controls['capacidad'])"
             [min]="1"

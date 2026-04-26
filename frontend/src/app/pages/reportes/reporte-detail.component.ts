@@ -44,7 +44,7 @@ import { RouteMapComponent } from '../../shared/components/route-map.component';
           <p-skeleton height="2rem" width="200px" />
         } @else if (reporte()) {
           <div class="flex items-center gap-3 flex-wrap">
-            <h1 class="text-2xl font-bold text-surface-100">Reporte #{{ reporte()!.id }}</h1>
+            <h1 class="text-2xl font-bold text-gray-800">Reporte #{{ reporte()!.id }}</h1>
             <app-status-badge [estado]="reporte()!.estadoReporte" />
           </div>
         }
@@ -60,17 +60,17 @@ import { RouteMapComponent } from '../../shared/components/route-map.component';
         <!-- Info Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <!-- Bus -->
-          <div class="bg-surface-800 rounded-xl p-5 border border-surface-700">
-            <p class="text-surface-400 text-xs mb-2 uppercase tracking-wide">Bus</p>
-            <p class="text-surface-100 text-xl font-bold font-mono">
+          <div class="bg-white rounded-xl p-5 border border-gray-200">
+            <p class="text-gray-500 text-xs mb-2 uppercase tracking-wide">Bus</p>
+            <p class="text-gray-800 text-xl font-bold font-mono">
               {{ reporte()!.bus?.codigo ?? 'Bus #' + reporte()!.busId }}
             </p>
           </div>
 
           <!-- Pasajeros -->
-          <div class="bg-surface-800 rounded-xl p-5 border border-surface-700">
-            <p class="text-surface-400 text-xs mb-2 uppercase tracking-wide">Pasajeros</p>
-            <p class="text-surface-100 text-xl font-bold">{{ reporte()!.cantidadPasajeros }}</p>
+          <div class="bg-white rounded-xl p-5 border border-gray-200">
+            <p class="text-gray-500 text-xs mb-2 uppercase tracking-wide">Pasajeros</p>
+            <p class="text-gray-800 text-xl font-bold">{{ reporte()!.cantidadPasajeros }}</p>
             @if (reporte()!.bus) {
               <div class="mt-2">
                 <app-ocupacion-bar
@@ -82,24 +82,24 @@ import { RouteMapComponent } from '../../shared/components/route-map.component';
           </div>
 
           <!-- Inicio -->
-          <div class="bg-surface-800 rounded-xl p-5 border border-surface-700">
-            <p class="text-surface-400 text-xs mb-2 uppercase tracking-wide">Inicio</p>
-            <p class="text-surface-100 font-semibold">{{ formatFecha(reporte()!.inicioEn) }}</p>
-            <p class="text-surface-400 text-sm font-mono mt-1">
+          <div class="bg-white rounded-xl p-5 border border-gray-200">
+            <p class="text-gray-500 text-xs mb-2 uppercase tracking-wide">Inicio</p>
+            <p class="text-gray-800 font-semibold">{{ formatFecha(reporte()!.inicioEn) }}</p>
+            <p class="text-gray-500 text-sm font-mono mt-1">
               {{ reporte()!.latitudInicio }}, {{ reporte()!.longitudInicio }}
             </p>
           </div>
 
           <!-- Fin -->
-          <div class="bg-surface-800 rounded-xl p-5 border border-surface-700">
-            <p class="text-surface-400 text-xs mb-2 uppercase tracking-wide">Fin</p>
+          <div class="bg-white rounded-xl p-5 border border-gray-200">
+            <p class="text-gray-500 text-xs mb-2 uppercase tracking-wide">Fin</p>
             @if (reporte()!.finEn) {
-              <p class="text-surface-100 font-semibold">{{ formatFecha(reporte()!.finEn!) }}</p>
-              <p class="text-surface-400 text-sm font-mono mt-1">
+              <p class="text-gray-800 font-semibold">{{ formatFecha(reporte()!.finEn!) }}</p>
+              <p class="text-gray-500 text-sm font-mono mt-1">
                 {{ reporte()!.latitudFin }}, {{ reporte()!.longitudFin }}
               </p>
             } @else {
-              <p class="text-surface-400">—</p>
+              <p class="text-gray-500">—</p>
             }
           </div>
         </div>
@@ -116,11 +116,11 @@ import { RouteMapComponent } from '../../shared/components/route-map.component';
         }
 
         <!-- Mapa de recorrido -->
-        <div class="bg-surface-800 rounded-xl border border-surface-700 overflow-hidden">
-          <div class="px-5 py-4 border-b border-surface-700 flex items-center justify-between">
+        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
             <div>
-              <h2 class="text-surface-100 font-semibold">Recorrido en Mapa</h2>
-              <p class="text-surface-400 text-xs mt-0.5">{{ seguimientos().length }} puntos GPS registrados</p>
+              <h2 class="text-gray-800 font-semibold">Recorrido en Mapa</h2>
+              <p class="text-gray-500 text-xs mt-0.5">{{ seguimientos().length }} puntos GPS registrados</p>
             </div>
             @if (reporte()!.estadoReporte === 'EN_RUTA') {
               <div class="flex items-center gap-2">
@@ -132,13 +132,13 @@ import { RouteMapComponent } from '../../shared/components/route-map.component';
 
           @if (cargandoSeguimientos()) {
             <div class="flex items-center justify-center" style="height: 420px;">
-              <div class="flex flex-col items-center gap-3 text-surface-400">
+              <div class="flex flex-col items-center gap-3 text-gray-500">
                 <i class="pi pi-spin pi-spinner text-3xl"></i>
                 <span class="text-sm">Cargando mapa...</span>
               </div>
             </div>
           } @else if (seguimientos().length === 0) {
-            <div class="flex flex-col items-center justify-center gap-3 text-surface-400" style="height: 420px;">
+            <div class="flex flex-col items-center justify-center gap-3 text-gray-500" style="height: 420px;">
               <i class="pi pi-map text-5xl opacity-30"></i>
               <p class="text-sm">No hay puntos de seguimiento registrados</p>
               <p class="text-xs opacity-60">El seguimiento se activa cuando el bus entra en estado EN_RUTA</p>
@@ -151,9 +151,9 @@ import { RouteMapComponent } from '../../shared/components/route-map.component';
         </div>
 
         <!-- Tabla de puntos GPS -->
-        <div class="bg-surface-800 rounded-xl border border-surface-700 overflow-hidden">
-          <div class="px-5 py-4 border-b border-surface-700">
-            <h2 class="text-surface-100 font-semibold text-sm">Detalle de puntos GPS</h2>
+        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div class="px-5 py-4 border-b border-gray-200">
+            <h2 class="text-gray-800 font-semibold text-sm">Detalle de puntos GPS</h2>
           </div>
           <p-table
             [value]="seguimientos()"
@@ -170,10 +170,10 @@ import { RouteMapComponent } from '../../shared/components/route-map.component';
             </ng-template>
             <ng-template pTemplate="body" let-seg let-i="rowIndex">
               <tr>
-                <td><span class="text-surface-400 text-xs">{{ i + 1 }}</span></td>
-                <td><span class="font-mono text-xs text-surface-100">{{ seg.latitud }}</span></td>
-                <td><span class="font-mono text-xs text-surface-100">{{ seg.longitud }}</span></td>
-                <td><span class="text-surface-400 text-xs">{{ formatFecha(seg.fechaCreacion) }}</span></td>
+                <td><span class="text-gray-500 text-xs">{{ i + 1 }}</span></td>
+                <td><span class="font-mono text-xs text-gray-800">{{ seg.latitud }}</span></td>
+                <td><span class="font-mono text-xs text-gray-800">{{ seg.longitud }}</span></td>
+                <td><span class="text-gray-500 text-xs">{{ formatFecha(seg.fechaCreacion) }}</span></td>
               </tr>
             </ng-template>
           </p-table>
@@ -190,7 +190,7 @@ import { RouteMapComponent } from '../../shared/components/route-map.component';
       [style]="{ width: '420px' }">
       <div class="flex flex-col gap-4 py-2" [formGroup]="formCompletar">
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-surface-400">Latitud Final</label>
+          <label class="text-sm font-medium text-gray-500">Latitud Final</label>
           <p-inputNumber
             formControlName="latitudFin"
             [minFractionDigits]="6"
@@ -203,7 +203,7 @@ import { RouteMapComponent } from '../../shared/components/route-map.component';
           }
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-surface-400">Longitud Final</label>
+          <label class="text-sm font-medium text-gray-500">Longitud Final</label>
           <p-inputNumber
             formControlName="longitudFin"
             [minFractionDigits]="6"

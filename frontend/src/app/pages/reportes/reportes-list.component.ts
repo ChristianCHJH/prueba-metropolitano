@@ -43,8 +43,8 @@ interface FiltroEstado {
       <!-- Header -->
       <div class="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 class="text-2xl font-bold text-surface-100">Reportes de Viaje</h1>
-          <p class="text-surface-400 text-sm mt-1">Historial de reportes del sistema</p>
+          <h1 class="text-2xl font-bold text-gray-800">Reportes de Viaje</h1>
+          <p class="text-gray-500 text-sm mt-1">Historial de reportes del sistema</p>
         </div>
         <p-button
           label="Nuevo Reporte"
@@ -55,7 +55,7 @@ interface FiltroEstado {
 
       <!-- Filtro -->
       <div class="flex items-center gap-3 flex-wrap">
-        <label class="text-sm text-surface-400">Filtrar por estado:</label>
+        <label class="text-sm text-gray-600">Filtrar por estado:</label>
         <p-dropdown
           [options]="filtrosEstado"
           [(ngModel)]="filtroSeleccionado"
@@ -66,7 +66,7 @@ interface FiltroEstado {
       </div>
 
       <!-- Tabla -->
-      <div class="bg-surface-800 rounded-xl border border-surface-700 overflow-hidden">
+      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <p-table
           [value]="reportesFiltrados()"
           [loading]="cargando()"
@@ -86,17 +86,17 @@ interface FiltroEstado {
           </ng-template>
           <ng-template pTemplate="body" let-reporte>
             <tr>
-              <td><span class="text-surface-400 text-sm">#{{ reporte.id }}</span></td>
+              <td><span class="text-gray-500 text-sm">#{{ reporte.id }}</span></td>
               <td>
-                <span class="font-mono font-semibold text-surface-100">
+                <span class="font-mono font-semibold text-gray-800">
                   {{ reporte.bus?.codigo ?? 'Bus #' + reporte.busId }}
                 </span>
               </td>
               <td><app-status-badge [estado]="reporte.estadoReporte" /></td>
-              <td><span class="text-surface-400">{{ reporte.cantidadPasajeros }}</span></td>
-              <td><span class="text-surface-400 text-sm">{{ formatFecha(reporte.inicioEn) }}</span></td>
-              <td><span class="text-surface-400 text-sm">{{ reporte.finEn ? formatFecha(reporte.finEn) : '—' }}</span></td>
-              <td><span class="text-surface-400 text-sm">{{ calcularDuracion(reporte.inicioEn, reporte.finEn) }}</span></td>
+              <td><span class="text-gray-500">{{ reporte.cantidadPasajeros }}</span></td>
+              <td><span class="text-gray-500 text-sm">{{ formatFecha(reporte.inicioEn) }}</span></td>
+              <td><span class="text-gray-500 text-sm">{{ reporte.finEn ? formatFecha(reporte.finEn) : '—' }}</span></td>
+              <td><span class="text-gray-500 text-sm">{{ calcularDuracion(reporte.inicioEn, reporte.finEn) }}</span></td>
               <td class="text-center">
                 <p-button
                   icon="pi pi-eye"
@@ -111,7 +111,7 @@ interface FiltroEstado {
           </ng-template>
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="8" class="text-center py-10 text-surface-400">
+              <td colspan="8" class="text-center py-10 text-gray-500">
                 <i class="pi pi-file text-4xl mb-3 block opacity-30"></i>
                 No hay reportes registrados
               </td>
@@ -130,7 +130,7 @@ interface FiltroEstado {
       [style]="{ width: '440px' }">
       <div class="flex flex-col gap-4 py-2" [formGroup]="form">
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-surface-400">Bus</label>
+          <label class="text-sm font-medium text-gray-500">Bus</label>
           <p-dropdown
             formControlName="busId"
             [options]="buses()"
@@ -145,7 +145,7 @@ interface FiltroEstado {
           }
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-surface-400">Cantidad de Pasajeros</label>
+          <label class="text-sm font-medium text-gray-500">Cantidad de Pasajeros</label>
           <p-inputNumber
             formControlName="cantidadPasajeros"
             [min]="0"
@@ -158,7 +158,7 @@ interface FiltroEstado {
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-surface-400">Latitud Inicio</label>
+            <label class="text-sm font-medium text-gray-500">Latitud Inicio</label>
             <p-inputNumber
               formControlName="latitudInicio"
               [minFractionDigits]="6"
@@ -170,7 +170,7 @@ interface FiltroEstado {
             }
           </div>
           <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-surface-400">Longitud Inicio</label>
+            <label class="text-sm font-medium text-gray-500">Longitud Inicio</label>
             <p-inputNumber
               formControlName="longitudInicio"
               [minFractionDigits]="6"

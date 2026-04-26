@@ -58,7 +58,7 @@ interface EstadoOpcion {
           <p-skeleton height="2rem" width="200px" />
         } @else if (bus()) {
           <div class="flex items-center gap-3 flex-wrap">
-            <h1 class="text-2xl font-bold text-surface-100 font-mono">{{ bus()!.codigo }}</h1>
+            <h1 class="text-2xl font-bold text-gray-800 font-mono">{{ bus()!.codigo }}</h1>
             @if (bus()!.estadoOperativoActual) {
               <app-status-badge [estado]="bus()!.estadoOperativoActual!" />
             }
@@ -68,8 +68,8 @@ interface EstadoOpcion {
 
       @if (!cargando() && bus()) {
         <!-- Cambiar Estado Operativo -->
-        <div class="bg-surface-800 rounded-xl border border-surface-700 p-5">
-          <h2 class="text-surface-100 font-semibold mb-4">Cambiar Estado Operativo</h2>
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <h2 class="text-gray-800 font-semibold mb-4">Cambiar Estado Operativo</h2>
           <div class="flex items-center gap-3 flex-wrap">
             <p-dropdown
               [options]="estadosOpciones"
@@ -94,30 +94,30 @@ interface EstadoOpcion {
             @if (bus()!.reporteActivo) {
               <div class="flex flex-col gap-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div class="bg-surface-900 rounded-xl p-4 border border-surface-700">
-                    <p class="text-surface-400 text-xs mb-1">Estado del Reporte</p>
+                  <div class="bg-slate-50 rounded-xl p-4 border border-gray-200">
+                    <p class="text-gray-500 text-xs mb-1">Estado del Reporte</p>
                     <app-status-badge [estado]="bus()!.reporteActivo!.estadoReporte" />
                   </div>
-                  <div class="bg-surface-900 rounded-xl p-4 border border-surface-700">
-                    <p class="text-surface-400 text-xs mb-1">Pasajeros</p>
-                    <p class="text-surface-100 font-semibold">{{ bus()!.reporteActivo!.cantidadPasajeros }}</p>
+                  <div class="bg-slate-50 rounded-xl p-4 border border-gray-200">
+                    <p class="text-gray-500 text-xs mb-1">Pasajeros</p>
+                    <p class="text-gray-800 font-semibold">{{ bus()!.reporteActivo!.cantidadPasajeros }}</p>
                   </div>
-                  <div class="bg-surface-900 rounded-xl p-4 border border-surface-700">
-                    <p class="text-surface-400 text-xs mb-2">Ocupación</p>
+                  <div class="bg-slate-50 rounded-xl p-4 border border-gray-200">
+                    <p class="text-gray-500 text-xs mb-2">Ocupación</p>
                     <app-ocupacion-bar
                       [porcentaje]="bus()!.reporteActivo!.porcentajeOcupacion"
                       [pasajeros]="bus()!.reporteActivo!.cantidadPasajeros"
                       [capacidad]="bus()!.reporteActivo!.capacidadBus" />
                   </div>
-                  <div class="bg-surface-900 rounded-xl p-4 border border-surface-700">
-                    <p class="text-surface-400 text-xs mb-1">Coordenadas Inicio</p>
-                    <p class="text-surface-100 text-sm font-mono">
+                  <div class="bg-slate-50 rounded-xl p-4 border border-gray-200">
+                    <p class="text-gray-500 text-xs mb-1">Coordenadas Inicio</p>
+                    <p class="text-gray-800 text-sm font-mono">
                       {{ bus()!.reporteActivo!.latitudInicio }}, {{ bus()!.reporteActivo!.longitudInicio }}
                     </p>
                   </div>
-                  <div class="bg-surface-900 rounded-xl p-4 border border-surface-700">
-                    <p class="text-surface-400 text-xs mb-1">Hora de Inicio</p>
-                    <p class="text-surface-100 text-sm">{{ formatFecha(bus()!.reporteActivo!.inicioEn) }}</p>
+                  <div class="bg-slate-50 rounded-xl p-4 border border-gray-200">
+                    <p class="text-gray-500 text-xs mb-1">Hora de Inicio</p>
+                    <p class="text-gray-800 text-sm">{{ formatFecha(bus()!.reporteActivo!.inicioEn) }}</p>
                   </div>
                 </div>
 
@@ -133,8 +133,8 @@ interface EstadoOpcion {
               </div>
             } @else {
               <div class="flex flex-col items-center justify-center py-12 gap-4">
-                <i class="pi pi-file text-5xl text-surface-400 opacity-40"></i>
-                <p class="text-surface-400">No hay reporte activo para este bus</p>
+                <i class="pi pi-file text-5xl text-gray-500 opacity-40"></i>
+                <p class="text-gray-500">No hay reporte activo para este bus</p>
                 <p-button
                   label="Iniciar Reporte"
                   icon="pi pi-play"
@@ -162,23 +162,23 @@ interface EstadoOpcion {
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-reporte>
-                <tr class="cursor-pointer hover:bg-surface-700/30" (click)="verReporte(reporte.id)">
-                  <td><span class="text-surface-400 text-sm">#{{ reporte.id }}</span></td>
+                <tr class="cursor-pointer hover:bg-slate-50" (click)="verReporte(reporte.id)">
+                  <td><span class="text-gray-500 text-sm">#{{ reporte.id }}</span></td>
                   <td><app-status-badge [estado]="reporte.estadoReporte" /></td>
-                  <td><span class="text-surface-400">{{ reporte.cantidadPasajeros }}</span></td>
-                  <td><span class="text-surface-400 text-sm">{{ formatFecha(reporte.inicioEn) }}</span></td>
-                  <td><span class="text-surface-400 text-sm">{{ reporte.finEn ? formatFecha(reporte.finEn) : '—' }}</span></td>
-                  <td><span class="text-surface-400 text-sm">{{ calcularDuracion(reporte.inicioEn, reporte.finEn) }}</span></td>
+                  <td><span class="text-gray-500">{{ reporte.cantidadPasajeros }}</span></td>
+                  <td><span class="text-gray-500 text-sm">{{ formatFecha(reporte.inicioEn) }}</span></td>
+                  <td><span class="text-gray-500 text-sm">{{ reporte.finEn ? formatFecha(reporte.finEn) : '—' }}</span></td>
+                  <td><span class="text-gray-500 text-sm">{{ calcularDuracion(reporte.inicioEn, reporte.finEn) }}</span></td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="emptymessage">
                 <tr>
-                  <td colspan="6" class="text-center py-8 text-surface-400">No hay reportes registrados</td>
+                  <td colspan="6" class="text-center py-8 text-gray-500">No hay reportes registrados</td>
                 </tr>
               </ng-template>
             </p-table>
             @if (totalReportes() > 0) {
-              <div class="border-t border-surface-700 mt-0">
+              <div class="border-t border-gray-200 mt-0">
                 <p-paginator
                   [rows]="pageSizeReportes"
                   [totalRecords]="totalReportes()"
@@ -197,30 +197,30 @@ interface EstadoOpcion {
                 }
               </div>
             } @else if (estados().length === 0) {
-              <p class="text-surface-400 py-8 text-center">No hay estados registrados</p>
+              <p class="text-gray-500 py-8 text-center">No hay estados registrados</p>
             } @else {
               <!-- Filtro por fecha -->
-              <div class="flex items-center gap-3 py-4 border-b border-surface-700 mb-2">
-                <i class="pi pi-calendar text-surface-400"></i>
+              <div class="flex items-center gap-3 py-4 border-b border-gray-200 mb-2">
+                <i class="pi pi-calendar text-gray-500"></i>
                 <input
                   type="date"
                   [ngModel]="fechaFiltroStr"
                   (ngModelChange)="onFechaChange($event)"
-                  class="bg-surface-700 border border-surface-600 rounded-lg px-3 py-1.5 text-surface-200 text-sm focus:outline-none focus:border-blue-500 cursor-pointer" />
+                  class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-gray-700 text-sm focus:outline-none focus:border-blue-500 cursor-pointer" />
                 @if (fechaFiltro) {
                   <button
-                    class="text-surface-500 hover:text-surface-300 text-xs flex items-center gap-1 cursor-pointer"
+                    class="text-gray-400 hover:text-gray-600 text-xs flex items-center gap-1 cursor-pointer"
                     (click)="limpiarFiltro()">
                     <i class="pi pi-times text-xs"></i> Limpiar
                   </button>
-                  <span class="text-surface-400 text-xs">
+                  <span class="text-gray-500 text-xs">
                     {{ estadosFiltrados().length }} estado(s)
                   </span>
                 }
               </div>
 
               @if (estadosFiltrados().length === 0) {
-                <p class="text-surface-400 text-center py-8 text-sm">No hay estados para el día seleccionado</p>
+                <p class="text-gray-500 text-center py-8 text-sm">No hay estados para el día seleccionado</p>
               } @else {
                 <!-- Timeline horizontal con scroll -->
                 <div class="overflow-x-auto pb-4 pt-4">
@@ -229,7 +229,7 @@ interface EstadoOpcion {
                       <div class="flex items-start">
                         <!-- Nodo -->
                         <div class="flex flex-col items-center gap-2" style="min-width: 130px;">
-                          <span class="text-surface-500 text-xs text-center whitespace-nowrap">
+                          <span class="text-gray-400 text-xs text-center whitespace-nowrap">
                             {{ formatFechaCorta(estado.fechaCreacion) }}
                           </span>
                           <span
@@ -239,14 +239,14 @@ interface EstadoOpcion {
                           </span>
                           <app-status-badge [estado]="estado.estadoOperativo" />
                           @if (duracionEstado(estado, estadosFiltrados()); as dur) {
-                            <span class="text-surface-500 text-xs">{{ dur }}</span>
+                            <span class="text-gray-400 text-xs">{{ dur }}</span>
                           }
                         </div>
                         <!-- Conector -->
                         @if (!last) {
                           <div class="flex items-center" style="margin-top: 38px;">
-                            <div class="h-0.5 w-10 bg-surface-600"></div>
-                            <i class="pi pi-angle-right text-surface-500 text-xs -ml-1"></i>
+                            <div class="h-0.5 w-10 bg-gray-300"></div>
+                            <i class="pi pi-angle-right text-gray-400 text-xs -ml-1"></i>
                           </div>
                         }
                       </div>
@@ -269,14 +269,14 @@ interface EstadoOpcion {
       [style]="{ width: '420px' }">
       <div class="flex flex-col gap-4 py-2" [formGroup]="formCompletar">
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-surface-400">Latitud Final</label>
+          <label class="text-sm font-medium text-gray-500">Latitud Final</label>
           <p-inputNumber formControlName="latitudFin" [minFractionDigits]="6" [maxFractionDigits]="8" placeholder="Ej: -33.456789" class="w-full" styleClass="w-full" />
           @if (formCompletar.controls['latitudFin'].invalid && formCompletar.controls['latitudFin'].touched) {
             <small class="text-red-400">Requerido</small>
           }
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-surface-400">Longitud Final</label>
+          <label class="text-sm font-medium text-gray-500">Longitud Final</label>
           <p-inputNumber formControlName="longitudFin" [minFractionDigits]="6" [maxFractionDigits]="8" placeholder="Ej: -70.654321" class="w-full" styleClass="w-full" />
           @if (formCompletar.controls['longitudFin'].invalid && formCompletar.controls['longitudFin'].touched) {
             <small class="text-red-400">Requerido</small>
@@ -300,21 +300,21 @@ interface EstadoOpcion {
       [style]="{ width: '420px' }">
       <div class="flex flex-col gap-4 py-2" [formGroup]="formIniciar">
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-surface-400">Cantidad de Pasajeros</label>
+          <label class="text-sm font-medium text-gray-500">Cantidad de Pasajeros</label>
           <p-inputNumber formControlName="cantidadPasajeros" [min]="0" placeholder="Número de pasajeros" class="w-full" styleClass="w-full" />
           @if (formIniciar.controls['cantidadPasajeros'].invalid && formIniciar.controls['cantidadPasajeros'].touched) {
             <small class="text-red-400">Requerido (mín. 0)</small>
           }
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-surface-400">Latitud Inicial</label>
+          <label class="text-sm font-medium text-gray-500">Latitud Inicial</label>
           <p-inputNumber formControlName="latitudInicio" [minFractionDigits]="6" [maxFractionDigits]="8" placeholder="Ej: -33.456789" class="w-full" styleClass="w-full" />
           @if (formIniciar.controls['latitudInicio'].invalid && formIniciar.controls['latitudInicio'].touched) {
             <small class="text-red-400">Requerido</small>
           }
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-surface-400">Longitud Inicial</label>
+          <label class="text-sm font-medium text-gray-500">Longitud Inicial</label>
           <p-inputNumber formControlName="longitudInicio" [minFractionDigits]="6" [maxFractionDigits]="8" placeholder="Ej: -70.654321" class="w-full" styleClass="w-full" />
           @if (formIniciar.controls['longitudInicio'].invalid && formIniciar.controls['longitudInicio'].touched) {
             <small class="text-red-400">Requerido</small>
@@ -550,11 +550,11 @@ export class BusDetailComponent implements OnInit {
       DISPONIBLE:        'bg-teal-500/20 border-teal-400 text-teal-400',
       EN_COLA:           'bg-amber-500/20 border-amber-400 text-amber-400',
       EN_RUTA:           'bg-green-500/20 border-green-400 text-green-400',
-      FINALIZADO:        'bg-surface-600/40 border-surface-400 text-surface-400',
+      FINALIZADO:        'bg-gray-300/40 border-gray-400 text-gray-500',
       FUERA_DE_SERVICIO: 'bg-red-500/20 border-red-400 text-red-400',
       EN_MANTENIMIENTO:  'bg-orange-500/20 border-orange-400 text-orange-400',
     };
-    return (map[estado] ?? 'bg-surface-600/40 border-surface-500 text-surface-400')
+    return (map[estado] ?? 'bg-gray-300/40 border-gray-400 text-gray-500')
       .split(' ')
       .reduce((acc, c) => ({ ...acc, [c]: true }), {});
   }

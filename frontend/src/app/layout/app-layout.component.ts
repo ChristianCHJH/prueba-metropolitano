@@ -9,9 +9,9 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
   standalone: true,
   imports: [RouterOutlet, SidebarComponent, ToastModule, ConfirmDialogModule],
   template: `
-    <div class="flex h-screen bg-surface-900 overflow-hidden">
+    <div class="flex h-screen overflow-hidden">
       <app-sidebar />
-      <main class="flex-1 overflow-y-auto">
+      <main class="flex-1 overflow-y-auto bg-gray-50">
         <router-outlet />
       </main>
     </div>
