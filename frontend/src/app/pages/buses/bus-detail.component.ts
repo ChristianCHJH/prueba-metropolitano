@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -191,22 +191,69 @@ interface EstadoOpcion {
           <!-- Tab 3: Estados Operativos -->
           <p-tabPanel header="Estados Operativos" leftIcon="pi pi-list">
             @if (cargandoEstados()) {
-              <div class="flex flex-col gap-3">
-                @for (i of [1,2,3]; track i) {
+              <div class="flex flex-col gap-3 py-4">
+                @for (i of [1,2,3,4]; track i) {
                   <p-skeleton height="3rem" />
                 }
               </div>
             } @else if (estados().length === 0) {
               <p class="text-surface-400 py-8 text-center">No hay estados registrados</p>
             } @else {
-              <div class="flex flex-col gap-2">
-                @for (estado of estados(); track estado.id) {
-                  <div class="flex items-center justify-between bg-surface-900 rounded-lg px-4 py-3 border border-surface-700">
-                    <app-status-badge [estado]="estado.estadoOperativo" />
-                    <span class="text-surface-400 text-sm">{{ formatFecha(estado.fechaCreacion) }}</span>
-                  </div>
+              <!-- Filtro por fecha -->
+              <div class="flex items-center gap-3 py-4 border-b border-surface-700 mb-2">
+                <i class="pi pi-calendar text-surface-400"></i>
+                <input
+                  type="date"
+                  [ngModel]="fechaFiltroStr"
+                  (ngModelChange)="onFechaChange($event)"
+                  class="bg-surface-700 border border-surface-600 rounded-lg px-3 py-1.5 text-surface-200 text-sm focus:outline-none focus:border-blue-500 cursor-pointer" />
+                @if (fechaFiltro) {
+                  <button
+                    class="text-surface-500 hover:text-surface-300 text-xs flex items-center gap-1 cursor-pointer"
+                    (click)="limpiarFiltro()">
+                    <i class="pi pi-times text-xs"></i> Limpiar
+                  </button>
+                  <span class="text-surface-400 text-xs">
+                    {{ estadosFiltrados().length }} estado(s)
+                  </span>
                 }
               </div>
+
+              @if (estadosFiltrados().length === 0) {
+                <p class="text-surface-400 text-center py-8 text-sm">No hay estados para el día seleccionado</p>
+              } @else {
+                <!-- Timeline horizontal con scroll -->
+                <div class="overflow-x-auto pb-4 pt-4">
+                  <div class="flex items-start min-w-max px-4">
+                    @for (estado of estadosFiltrados(); track estado.id; let last = $last) {
+                      <div class="flex items-start">
+                        <!-- Nodo -->
+                        <div class="flex flex-col items-center gap-2" style="min-width: 130px;">
+                          <span class="text-surface-500 text-xs text-center whitespace-nowrap">
+                            {{ formatFechaCorta(estado.fechaCreacion) }}
+                          </span>
+                          <span
+                            class="flex items-center justify-center w-10 h-10 rounded-full border-2 shadow-md"
+                            [ngClass]="markerClass(estado.estadoOperativo)">
+                            <i class="text-sm" [ngClass]="markerIcon(estado.estadoOperativo)"></i>
+                          </span>
+                          <app-status-badge [estado]="estado.estadoOperativo" />
+                          @if (duracionEstado(estado, estadosFiltrados()); as dur) {
+                            <span class="text-surface-500 text-xs">{{ dur }}</span>
+                          }
+                        </div>
+                        <!-- Conector -->
+                        @if (!last) {
+                          <div class="flex items-center" style="margin-top: 38px;">
+                            <div class="h-0.5 w-10 bg-surface-600"></div>
+                            <i class="pi pi-angle-right text-surface-500 text-xs -ml-1"></i>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
             }
           </p-tabPanel>
         </p-tabView>
@@ -300,6 +347,25 @@ export class BusDetailComponent implements OnInit {
   pageSizeReportes = 10;
   estados = signal<EstadoBus[]>([]);
   cargandoEstados = signal(false);
+  fechaFiltro: Date | null = null;
+  fechaFiltroStr: string = '';
+
+  onFechaChange(valor: string): void {
+    this.fechaFiltroStr = valor;
+    this.fechaFiltro = valor ? new Date(valor + 'T00:00:00') : null;
+  }
+
+  limpiarFiltro(): void {
+    this.fechaFiltro = null;
+    this.fechaFiltroStr = '';
+  }
+
+  estadosFiltrados = computed(() => {
+    const ordenados = [...this.estados()].reverse();
+    if (!this.fechaFiltro) return ordenados;
+    const dia = this.fechaFiltro.toDateString();
+    return ordenados.filter(e => new Date(e.fechaCreacion).toDateString() === dia);
+  });
   aplicandoEstado = signal(false);
   guardandoReporte = signal(false);
   estadoSeleccionado: EstadoOperativo | null = null;
@@ -470,6 +536,53 @@ export class BusDetailComponent implements OnInit {
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit',
     });
+  }
+
+  formatFechaCorta(fecha: string): string {
+    return new Date(fecha).toLocaleString('es-CL', {
+      day: '2-digit', month: '2-digit',
+      hour: '2-digit', minute: '2-digit',
+    });
+  }
+
+  markerClass(estado: string): Record<string, boolean> {
+    const map: Record<string, string> = {
+      DISPONIBLE:        'bg-teal-500/20 border-teal-400 text-teal-400',
+      EN_COLA:           'bg-amber-500/20 border-amber-400 text-amber-400',
+      EN_RUTA:           'bg-green-500/20 border-green-400 text-green-400',
+      FINALIZADO:        'bg-surface-600/40 border-surface-400 text-surface-400',
+      FUERA_DE_SERVICIO: 'bg-red-500/20 border-red-400 text-red-400',
+      EN_MANTENIMIENTO:  'bg-orange-500/20 border-orange-400 text-orange-400',
+    };
+    return (map[estado] ?? 'bg-surface-600/40 border-surface-500 text-surface-400')
+      .split(' ')
+      .reduce((acc, c) => ({ ...acc, [c]: true }), {});
+  }
+
+  markerIcon(estado: string): string {
+    const map: Record<string, string> = {
+      DISPONIBLE:        'pi pi-check-circle',
+      EN_COLA:           'pi pi-clock',
+      EN_RUTA:           'pi pi-map-marker',
+      FINALIZADO:        'pi pi-flag',
+      FUERA_DE_SERVICIO: 'pi pi-times-circle',
+      EN_MANTENIMIENTO:  'pi pi-wrench',
+    };
+    return map[estado] ?? 'pi pi-circle';
+  }
+
+  duracionEstado(estado: EstadoBus, todos: EstadoBus[]): string | null {
+    const idx = todos.indexOf(estado);
+    if (idx === todos.length - 1) return null;
+    const siguiente = todos[idx + 1];
+    const diff = Math.floor(
+      (new Date(siguiente.fechaCreacion).getTime() - new Date(estado.fechaCreacion).getTime()) / 60000
+    );
+    if (diff < 1) return null;
+    if (diff < 60) return `${diff} min`;
+    const h = Math.floor(diff / 60);
+    const m = diff % 60;
+    return m > 0 ? `${h}h ${m}m` : `${h}h`;
   }
 
   calcularDuracion(inicio: string, fin: string | null): string {
