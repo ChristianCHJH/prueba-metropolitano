@@ -13,6 +13,7 @@ import { Reporte } from '../../core/models/reporte.model';
 import { Seguimiento } from '../../core/models/seguimiento.model';
 import { StatusBadgeComponent } from '../../shared/components/status-badge.component';
 import { OcupacionBarComponent } from '../../shared/components/ocupacion-bar.component';
+import { RouteMapComponent } from '../../shared/components/route-map.component';
 
 @Component({
   selector: 'app-reporte-detail',
@@ -27,6 +28,7 @@ import { OcupacionBarComponent } from '../../shared/components/ocupacion-bar.com
     SkeletonModule,
     StatusBadgeComponent,
     OcupacionBarComponent,
+    RouteMapComponent,
   ],
   template: `
     <div class="p-6 flex flex-col gap-6">
@@ -113,11 +115,45 @@ import { OcupacionBarComponent } from '../../shared/components/ocupacion-bar.com
           </div>
         }
 
-        <!-- Tabla Seguimientos -->
+        <!-- Mapa de recorrido -->
+        <div class="bg-surface-800 rounded-xl border border-surface-700 overflow-hidden">
+          <div class="px-5 py-4 border-b border-surface-700 flex items-center justify-between">
+            <div>
+              <h2 class="text-surface-100 font-semibold">Recorrido en Mapa</h2>
+              <p class="text-surface-400 text-xs mt-0.5">{{ seguimientos().length }} puntos GPS registrados</p>
+            </div>
+            @if (reporte()!.estadoReporte === 'EN_RUTA') {
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                <span class="text-green-400 text-xs font-medium">En vivo</span>
+              </div>
+            }
+          </div>
+
+          @if (cargandoSeguimientos()) {
+            <div class="flex items-center justify-center" style="height: 420px;">
+              <div class="flex flex-col items-center gap-3 text-surface-400">
+                <i class="pi pi-spin pi-spinner text-3xl"></i>
+                <span class="text-sm">Cargando mapa...</span>
+              </div>
+            </div>
+          } @else if (seguimientos().length === 0) {
+            <div class="flex flex-col items-center justify-center gap-3 text-surface-400" style="height: 420px;">
+              <i class="pi pi-map text-5xl opacity-30"></i>
+              <p class="text-sm">No hay puntos de seguimiento registrados</p>
+              <p class="text-xs opacity-60">El seguimiento se activa cuando el bus entra en estado EN_RUTA</p>
+            </div>
+          } @else {
+            <app-route-map
+              [seguimientos]="seguimientos()"
+              [estadoReporte]="reporte()!.estadoReporte" />
+          }
+        </div>
+
+        <!-- Tabla de puntos GPS -->
         <div class="bg-surface-800 rounded-xl border border-surface-700 overflow-hidden">
           <div class="px-5 py-4 border-b border-surface-700">
-            <h2 class="text-surface-100 font-semibold">Puntos de Seguimiento</h2>
-            <p class="text-surface-400 text-xs mt-0.5">{{ seguimientos().length }} puntos registrados</p>
+            <h2 class="text-surface-100 font-semibold text-sm">Detalle de puntos GPS</h2>
           </div>
           <p-table
             [value]="seguimientos()"
@@ -126,7 +162,7 @@ import { OcupacionBarComponent } from '../../shared/components/ocupacion-bar.com
             class="w-full">
             <ng-template pTemplate="header">
               <tr>
-                <th class="w-16">#</th>
+                <th class="w-12">#</th>
                 <th>Latitud</th>
                 <th>Longitud</th>
                 <th>Fecha / Hora</th>
@@ -134,18 +170,10 @@ import { OcupacionBarComponent } from '../../shared/components/ocupacion-bar.com
             </ng-template>
             <ng-template pTemplate="body" let-seg let-i="rowIndex">
               <tr>
-                <td><span class="text-surface-400 text-sm">{{ i + 1 }}</span></td>
-                <td><span class="font-mono text-sm text-surface-100">{{ seg.latitud }}</span></td>
-                <td><span class="font-mono text-sm text-surface-100">{{ seg.longitud }}</span></td>
-                <td><span class="text-surface-400 text-sm">{{ formatFecha(seg.fechaCreacion) }}</span></td>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="emptymessage">
-              <tr>
-                <td colspan="4" class="text-center py-10 text-surface-400">
-                  <i class="pi pi-map-marker text-4xl mb-3 block opacity-30"></i>
-                  No hay puntos de seguimiento registrados
-                </td>
+                <td><span class="text-surface-400 text-xs">{{ i + 1 }}</span></td>
+                <td><span class="font-mono text-xs text-surface-100">{{ seg.latitud }}</span></td>
+                <td><span class="font-mono text-xs text-surface-100">{{ seg.longitud }}</span></td>
+                <td><span class="text-surface-400 text-xs">{{ formatFecha(seg.fechaCreacion) }}</span></td>
               </tr>
             </ng-template>
           </p-table>
