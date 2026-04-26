@@ -31,6 +31,7 @@ Representa cada vehículo en la flota.
 | `código` | String | Código único del bus (ej: "BUS-001", "M-1234") |
 | `capacidad` | Integer | Número máximo de pasajeros |
 | `creado_en` | Timestamp | Cuándo se registró el bus |
+| `eliminado` | Boolean | `false` por defecto; `true` si el bus fue eliminado |
 
 ---
 
@@ -43,17 +44,26 @@ Representa el ciclo completo de un bus en una ruta: desde que el conductor inici
 | `id` | UUID/Int | Identificador único del reporte |
 | `bus_id` | FK → Bus | Bus que realizó el recorrido |
 | `cantidad_pasajeros` | Integer | Pasajeros al momento del inicio |
-| `estado_bus_id` | FK → EstadoBus | Último estado registrado del bus en este reporte |
+| `estado` | Enum | Estado del ciclo de vida del reporte (ver abajo) |
 | `latitud_inicio` | Float | Coordenada donde inició el reporte |
 | `longitud_inicio` | Float | Coordenada donde inició el reporte |
 | `latitud_fin` | Float | Coordenada donde finalizó (se llena al completar) |
 | `longitud_fin` | Float | Coordenada donde finalizó (se llena al completar) |
 | `inicio_en` | Timestamp | Cuándo inició el reporte |
-| `fin_en` | Timestamp | Cuándo finalizó (se llena al completar) |
+| `fin_en` | Timestamp / null | Cuándo finalizó (se llena al completar) |
+| `eliminado` | Boolean | `false` por defecto; `true` si el reporte fue eliminado |
 
-> `estado_bus_id` apunta al registro más reciente de `EstadoBus` para ese bus. Cuando el conductor actualiza el estado (ej: EN_RUTA → COMPLETADO), se crea un nuevo registro en `EstadoBus` y se actualiza esta FK.
+**Estados del Reporte:**
+
+| Estado | Descripción |
+| ------ | ----------- |
+| `EN_COLA` | Bus asignado, esperando para iniciar el recorrido |
+| `EN_RUTA` | Bus circulando activamente — el seguimiento está activo |
+| `FINALIZADO` | Recorrido completado — el seguimiento se detiene |
+
+> Estos estados son exclusivos del ciclo de vida del reporte y **no deben confundirse** con los estados de `EstadoBus`, que representan el estado operativo del bus físico.
 >
-> Un bus solo puede tener un reporte activo (estado EN_RUTA o EN_COLA) a la vez.
+> **Regla de negocio:** No se puede crear un nuevo Reporte si el bus ya tiene uno con estado `EN_COLA` o `EN_RUTA`. El sistema rechaza la solicitud hasta que el reporte anterior sea `FINALIZADO`.
 
 ---
 
@@ -64,12 +74,16 @@ Registro periódico de ubicación del bus durante un viaje activo. Se genera apr
 | Campo | Tipo | Descripción |
 |-------|------|-------------|
 | `id` | UUID/Int | Identificador único del registro |
-| `viaje_id` | FK → Reporte | Reporte al que pertenece este punto |
+| `reporte_id` | FK → Reporte | Reporte al que pertenece este punto |
 | `latitud` | Float | Coordenada de ubicación |
 | `longitud` | Float | Coordenada de ubicación |
 | `creado_en` | Timestamp | Cuándo se registró esta ubicación |
 
-> Con todos los registros de `Seguimiento` de un viaje ordenados por `creado_en`, se puede reconstruir el trayecto completo del bus.
+> El seguimiento **se activa únicamente cuando el bus entra en estado `EN_RUTA`**. Mientras el bus esté `EN_COLA`, `DISPONIBLE` u otro estado, no se generan registros.
+>
+> El seguimiento **se detiene** cuando el reporte finaliza (el bus sale del estado `EN_RUTA`).
+>
+> Con todos los registros ordenados por `creado_en` se puede reconstruir el trayecto completo del bus.
 
 ---
 
@@ -85,6 +99,7 @@ Permite visualizar, por ejemplo, una línea de tiempo del día: cuánto tiempo e
 | `bus_id` | FK → Bus | Bus al que pertenece el estado |
 | `estado` | Enum | Estado registrado (ver tabla abajo) |
 | `creado_en` | Timestamp | Cuándo entró en este estado |
+| `eliminado` | Boolean | `false` por defecto; `true` si el registro fue eliminado |
 
 **Estados posibles:**
 
@@ -93,10 +108,13 @@ Permite visualizar, por ejemplo, una línea de tiempo del día: cuánto tiempo e
 | `DISPONIBLE` | Bus operativo, sin actividad activa |
 | `EN_COLA` | Bus en terminal esperando para recoger pasajeros |
 | `EN_RUTA` | Bus circulando activamente en su recorrido |
+| `FINALIZADO` | Ruta completada — el bus acaba de terminar su recorrido |
 | `FUERA_DE_SERVICIO` | Bus no disponible por avería o incidente |
 | `EN_MANTENIMIENTO` | Bus en taller por mantenimiento programado |
 
 > El estado actual del bus = último registro `EstadoBus` de ese bus ordenado por `creado_en DESC`.
+>
+> Al finalizar una ruta se inserta `FINALIZADO`, no `DISPONIBLE` directamente. Desde `FINALIZADO` el conductor puede pasar a `DISPONIBLE` o a `FUERA_DE_SERVICIO` según corresponda.
 >
 > Con todos los registros del día ordenados por `creado_en` se puede construir una línea de tiempo visual del comportamiento del bus durante la jornada.
 
@@ -140,11 +158,12 @@ BUS (1) ──────────── (N) VIAJE (1) ───────
 **Objetivo:** Registrar el inicio de servicio en una ruta
 
 ```
-1. Conductor envía POST /viajes con: bus_id, latitud, longitud, cantidad_pasajeros
-2. Sistema valida que el bus exista y no tenga un viaje EN_CURSO activo
-3. Sistema crea Reporte con estado = EN_CURSO, registra latitud/longitud de inicio
-4. Retorna el viaje creado con su ID
-5. A partir de este momento, el sistema comienza a recibir registros de Seguimiento
+1. Conductor envía POST /reportes con: bus_id, latitud, longitud, cantidad_pasajeros
+2. Sistema valida que el bus exista y no esté eliminado
+3. Sistema verifica que el bus NO tenga estado EN_COLA o EN_RUTA activo → si sí, rechaza con error
+4. Sistema crea registro en EstadoBus con estado = EN_COLA
+5. Sistema crea Reporte con estado_bus_id apuntando al nuevo EstadoBus, registra latitud/longitud de inicio
+6. Retorna el reporte creado con su ID
 ```
 
 ---
@@ -155,11 +174,13 @@ BUS (1) ──────────── (N) VIAJE (1) ───────
 **Objetivo:** Trazar el recorrido del bus durante el viaje
 
 ```
-1. GPS envía POST /seguimientos con: viaje_id, latitud, longitud
-2. Sistema valida que el viaje exista y esté EN_CURSO
-3. Sistema crea registro en tabla Seguimiento con timestamp actual
-4. Retorna confirmación
-5. Se repite cada ~5 minutos mientras el viaje esté activo
+1. GPS envía POST /seguimientos con: reporte_id, latitud, longitud
+2. Sistema valida que el reporte exista y no esté eliminado
+3. Sistema verifica que el estado actual del bus sea EN_RUTA → si no, rechaza
+4. Sistema crea registro en Seguimiento con timestamp actual
+5. Retorna confirmación
+6. Se repite automáticamente cada ~5 minutos mientras el bus esté EN_RUTA
+7. Se detiene automáticamente cuando el bus sale del estado EN_RUTA
 ```
 
 ---
@@ -170,14 +191,15 @@ BUS (1) ──────────── (N) VIAJE (1) ───────
 **Objetivo:** Marcar el viaje como completado al llegar al destino
 
 ```
-1. Conductor envía PATCH /viajes/{id}/completar con: latitud, longitud
-2. Sistema valida que el viaje esté EN_CURSO
+1. Conductor envía PATCH /reportes/{id}/completar con: latitud, longitud
+2. Sistema valida que el reporte exista, no esté eliminado, y el bus esté EN_RUTA o EN_COLA
 3. Sistema actualiza Reporte:
-   - estado = COMPLETADO
+   - estado = FINALIZADO (estado final del reporte, no cambia más)
    - latitud_fin / longitud_fin = coordenada actual
    - fin_en = timestamp actual
-4. Retorna el viaje actualizado
-5. Bus queda disponible para iniciar un nuevo viaje
+4. Sistema crea registro en EstadoBus con estado = FINALIZADO
+5. El seguimiento se detiene (ya no se aceptan nuevos registros para este reporte)
+6. El conductor puede luego presionar "Disponible" o "Fuera de servicio" (acciones separadas que solo escriben en EstadoBus)
 ```
 
 ---
@@ -286,30 +308,31 @@ CONDUCTOR                    SISTEMA                        BD
 ## Diagrama de Relaciones de BD
 
 ```
-┌──────────────────┐       ┌──────────────────────────────────┐
-│      BUSES       │       │             VIAJES               │
-├──────────────────┤       ├──────────────────────────────────┤
-│ id               │──1──N─│ id                               │
-│ código           │       │ bus_id (FK)                      │
-│ capacidad        │       │ cantidad_pasajeros               │
-│ creado_en        │       │ estado (EN_CURSO/COMPLETADO)     │
-└──────────────────┘       │ latitud_inicio / longitud_inicio │
-                           │ latitud_fin / longitud_fin       │
-                           │ inicio_en                        │
-                           │ fin_en                           │
-                           └──────────────┬───────────────────┘
-                                          │ 1
-                                          │
-                                          N
-                           ┌──────────────────────────────────┐
-                           │          SEGUIMIENTOS            │
-                           ├──────────────────────────────────┤
-                           │ id                               │
-                           │ viaje_id (FK)                    │
-                           │ latitud                          │
-                           │ longitud                         │
-                           │ creado_en                        │
-                           └──────────────────────────────────┘
+┌──────────────────────┐        ┌────────────────────────────────────┐
+│        BUSES         │        │             REPORTES               │
+├──────────────────────┤        ├────────────────────────────────────┤
+│ id                   │──1──N──│ id                                 │
+│ código               │        │ bus_id (FK → BUSES)                │
+│ capacidad            │        │ estado (EN_COLA/EN_RUTA/FINALIZADO)│
+│ creado_en            │        │ cantidad_pasajeros                  │
+│ eliminado            │        │ latitud_inicio / longitud_inicio    │
+└──────────┬───────────┘        │ latitud_fin / longitud_fin         │
+           │                    │ inicio_en                          │
+           │ 1                  │ fin_en                             │
+           │                    │ eliminado                          │
+           N                    └──────────────┬─────────────────────┘
+┌──────────────────────┐                       │ 1
+│     ESTADO_BUS       │                       │
+├──────────────────────┤                       N
+│ id                   │        ┌──────────────────────────────────┐
+│ bus_id (FK → BUSES)  │        │          SEGUIMIENTOS            │
+│ estado (Enum)        │        ├──────────────────────────────────┤
+│ creado_en            │        │ id                               │
+│ eliminado            │        │ reporte_id (FK → REPORTES)       │
+└──────────────────────┘        │ latitud                          │
+                                │ longitud                         │
+                                │ creado_en                        │
+                                └──────────────────────────────────┘
 ```
 
 ---
