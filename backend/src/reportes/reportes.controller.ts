@@ -6,21 +6,38 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import {
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { ReportesService } from './reportes.service';
 import { CrearReporteDto } from './dto/crear-reporte.dto';
 import { CompletarReporteDto } from './dto/completar-reporte.dto';
+import { EstadoReporte } from './reportes.entity';
 
 @ApiTags('Reportes')
 @Controller('reportes')
 export class ReportesController {
   constructor(private readonly reportesService: ReportesService) {}
+
+  @Get()
+  @ApiOperation({ summary: 'Listar todos los reportes con paginación' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'estado', required: false, enum: EstadoReporte })
+  @ApiResponse({ status: 200, description: 'Listado de reportes' })
+  listar(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query('estado') estado?: EstadoReporte,
+  ) {
+    return this.reportesService.listar(Number(page), Number(limit), estado);
+  }
 
   @Post()
   @ApiOperation({ summary: 'Iniciar un nuevo reporte de viaje para un bus' })

@@ -1,0 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background-color: #0F172A;
+  color: #F1F5F9;
+  margin: 0;
+  padding: 0;
+}
+
+/* PrimeNG dark theme overrides */
+.p-dialog .p-dialog-content {
+  background: #1E293B;
+  color: #F1F5F9;
+}
+
+.p-dialog .p-dialog-header {
+  background: #1E293B;
+  color: #F1F5F9;
+  border-bottom: 1px solid #334155;
+}
+
+.p-dialog .p-dialog-footer {
+  background: #1E293B;
+  border-top: 1px solid #334155;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background: #1E293B;
+  color: #94A3B8;
+  border-color: #334155;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.p-datatable .p-datatable-tbody > tr {
+  background: #0F172A;
+  color: #F1F5F9;
+  border-color: #334155;
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+  background: #1E293B;
+}
+
+.p-paginator {
+  background: #1E293B;
+  color: #94A3B8;
+  border-color: #334155;
+}
+
+.p-paginator .p-paginator-page.p-highlight {
+  background: #3B82F6;
+  color: #fff;
+}
+
+.p-dropdown {
+  background: #1E293B;
+  border-color: #334155;
+  color: #F1F5F9;
+}
+
+.p-dropdown:not(.p-disabled):hover {
+  border-color: #3B82F6;
+}
+
+.p-dropdown-panel {
+  background: #1E293B;
+  border-color: #334155;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  color: #F1F5F9;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item:hover {
+  background: #334155;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+  background: #3B82F6;
+  color: #fff;
+}
+
+.p-inputtext {
+  background: #1E293B;
+  border-color: #334155;
+  color: #F1F5F9;
+}
+
+.p-inputtext:enabled:hover {
+  border-color: #3B82F6;
+}
+
+.p-inputtext:enabled:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
+
+.p-inputnumber-input {
+  background: #1E293B;
+  border-color: #334155;
+  color: #F1F5F9;
+}
+
+.p-tabview .p-tabview-nav {
+  background: transparent;
+  border-color: #334155;
+}
+
+.p-tabview .p-tabview-nav li .p-tabview-nav-link {
+  background: transparent;
+  color: #94A3B8;
+  border-color: #334155;
+}
+
+.p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+  color: #3B82F6;
+  border-color: #3B82F6;
+  background: transparent;
+}
+
+.p-tabview .p-tabview-nav li:not(.p-highlight) .p-tabview-nav-link:hover {
+  color: #F1F5F9;
+  background: rgba(51, 65, 85, 0.5);
+}
+
+.p-tabview .p-tabview-panels {
+  background: transparent;
+  padding: 1.5rem 0 0 0;
+}
+
+.p-toast .p-toast-message {
+  background: #1E293B;
+  border-color: #334155;
+  color: #F1F5F9;
+}
+
+.p-confirmdialog .p-dialog-content {
+  background: #1E293B;
+  color: #F1F5F9;
+}
+
+.p-confirmdialog .p-dialog-header {
+  background: #1E293B;
+  color: #F1F5F9;
+  border-bottom: 1px solid #334155;
+}
+
+.p-confirmdialog .p-dialog-footer {
+  background: #1E293B;
+  border-top: 1px solid #334155;
+}
+
+.p-skeleton {
+  background: #1E293B;
+}
+
+.p-skeleton::after {
+  background: linear-gradient(90deg, transparent, #334155, transparent);
+}

@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
+import { PaginatedData } from '../common/interceptors/transform.interceptor';
 import { Reporte, EstadoReporte } from './reportes.entity';
 import { CrearReporteDto } from './dto/crear-reporte.dto';
 import { CompletarReporteDto } from './dto/completar-reporte.dto';
@@ -28,6 +29,28 @@ export class ReportesService {
 
     private readonly estadoBusService: EstadoBusService,
   ) {}
+
+  async listar(
+    page: number,
+    limit: number,
+    estado?: EstadoReporte,
+  ): Promise<PaginatedData<Reporte>> {
+    const where: Record<string, unknown> = { eliminado: false };
+    if (estado) where['estadoReporte'] = estado;
+
+    const [reportes, total] = await this.reporteRepository.findAndCount({
+      where,
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { inicioEn: 'DESC' },
+      relations: ['bus'],
+    });
+
+    return {
+      data: reportes,
+      meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+    };
+  }
 
   async iniciarReporte(dto: CrearReporteDto): Promise<Reporte> {
     const bus = await this.busRepository.findOne({
