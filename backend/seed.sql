@@ -1,7 +1,74 @@
-BEGIN;
+-- ═══════════════════════════════════════════════════════════
+--  SCHEMA
+-- ═══════════════════════════════════════════════════════════
 
--- Limpiar datos existentes y reiniciar secuencias
-TRUNCATE TABLE seguimiento, estado_bus, reporte, bus RESTART IDENTITY CASCADE;
+DO $$ BEGIN
+  CREATE TYPE estado_bus_estado_operativo_enum AS ENUM (
+    'DISPONIBLE','EN_COLA','EN_RUTA','FINALIZADO','FUERA_DE_SERVICIO','EN_MANTENIMIENTO'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  CREATE TYPE reporte_estado_reporte_enum AS ENUM ('EN_COLA','EN_RUTA','FINALIZADO');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+CREATE TABLE IF NOT EXISTS bus (
+    id                    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    codigo                VARCHAR NOT NULL UNIQUE,
+    capacidad             INTEGER NOT NULL,
+    usuario_creacion      BIGINT NOT NULL,
+    usuario_actualizacion BIGINT NOT NULL,
+    fecha_creacion        TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    estado                BOOLEAN NOT NULL DEFAULT true,
+    eliminado             BOOLEAN NOT NULL DEFAULT false
+);
+
+CREATE TABLE IF NOT EXISTS estado_bus (
+    id                    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    bus_id                BIGINT NOT NULL REFERENCES bus(id),
+    estado_operativo      estado_bus_estado_operativo_enum NOT NULL,
+    usuario_creacion      BIGINT NOT NULL,
+    usuario_actualizacion BIGINT NOT NULL,
+    fecha_creacion        TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    estado                BOOLEAN NOT NULL DEFAULT true,
+    eliminado             BOOLEAN NOT NULL DEFAULT false
+);
+
+CREATE TABLE IF NOT EXISTS reporte (
+    id                    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    bus_id                BIGINT NOT NULL REFERENCES bus(id),
+    estado_reporte        reporte_estado_reporte_enum NOT NULL DEFAULT 'EN_COLA',
+    cantidad_pasajeros    INTEGER NOT NULL,
+    latitud_inicio        DECIMAL(10,7) NOT NULL,
+    longitud_inicio       DECIMAL(10,7) NOT NULL,
+    latitud_fin           DECIMAL(10,7),
+    longitud_fin          DECIMAL(10,7),
+    inicio_en             TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fin_en                TIMESTAMP WITH TIME ZONE,
+    usuario_creacion      BIGINT NOT NULL,
+    usuario_actualizacion BIGINT NOT NULL,
+    fecha_creacion        TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    estado                BOOLEAN NOT NULL DEFAULT true,
+    eliminado             BOOLEAN NOT NULL DEFAULT false
+);
+
+CREATE TABLE IF NOT EXISTS seguimiento (
+    id                    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    reporte_id            BIGINT NOT NULL REFERENCES reporte(id),
+    latitud               DECIMAL(10,7) NOT NULL,
+    longitud              DECIMAL(10,7) NOT NULL,
+    usuario_creacion      BIGINT NOT NULL,
+    usuario_actualizacion BIGINT NOT NULL,
+    fecha_creacion        TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    estado                BOOLEAN NOT NULL DEFAULT true,
+    eliminado             BOOLEAN NOT NULL DEFAULT false
+);
+
+BEGIN;
 
 -- ═══════════════════════════════════════════════════════════
 --  BUSES  (capacidad 200 pasajeros c/u)

@@ -37,55 +37,6 @@ Los datos de prueba se cargan automáticamente al crear la base de datos por pri
 
 ---
 
-## Opción B — Levantar manualmente
-
-### 1. Base de datos
-
-Crear la base de datos en PostgreSQL:
-
-```sql
-CREATE DATABASE metropolitano_db;
-```
-
-### 2. Backend
-
-```bash
-cd backend
-
-# Copiar variables de entorno
-cp .env.example .env
-
-# Instalar dependencias
-npm install
-
-# Levantar en modo desarrollo
-npm run start:dev
-```
-
-El backend corre en `http://localhost:3000`. TypeORM crea las tablas automáticamente (`synchronize: true`).
-
-Cargar datos de prueba:
-
-```bash
-psql -U postgres -d metropolitano_db -f seed.sql
-```
-
-### 3. Frontend
-
-```bash
-cd frontend
-
-# Instalar dependencias
-npm install
-
-# Levantar
-npm start
-```
-
-El frontend corre en `http://localhost:4200`.
-
----
-
 ## Variables de entorno (backend)
 
 Archivo: `backend/.env`
